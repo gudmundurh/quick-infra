@@ -2,6 +2,9 @@
 
 _Light-weight and (somewhat) production grade skeleton for building web apps on Azure super-quickly._
 
+Get started: Follow [the steps in the template README](template/README.md).
+
+
 # Design
 
 Principles:
@@ -25,89 +28,12 @@ Will it last? Time will tell 😎
 
 The template contains:
 
-1. This readme, containing all the necessary commands
-1. Bicep file with Azure infrastructure
+1. [An readme file](template/README.md), containing all the necessary commands
+1. [Bicep file](template/infrastructure/main.bicep) with Azure infrastructure
 2. Github Actions pipeline for deploying to Azure SWA
 
 The infrastructure footprint is limited to a single Azure resource group and a repository in Github, sharing the same name. This makes it easy to delete the project down the line.
 
-# Setup
-
-Before you start:
-
-1. You need to be logged in via the Azure CLI and have selected a subscription you can write to (see `az account show`)
-2. You need to be logged in with the Github CLI (`gh`)
-
-The snippets below refer to the environment variable `NAME`, which you should set to your project name:
-
-    NAME=poc-quicky-20230225
-
-(I like having a timestamp in the name, minimizing the headache in the future when trying to get rid of old projects.)
-
-Create Svelte app
-
-    pnpm create svelte@latest $NAME 
-    cd $NAME
-    pnpm i
-
-Copy in the template:
-
-    curl -L https://github.com/gudmundurh/quick-infra/archive/refs/heads/main.tar.gz | tar  --strip-components=1 -xvz
-
-Create infrastructure
-
-    az group create -g $NAME -l westeurope
-    az deployment group create -g $NAME --template-file infrastructure/main.bicep
-
-Create Github repo
-
-    gh repo create $NAME --private
-
-Create Git repo and push
-
-    git init . && git add . && git commit -m 'Initial commit'
-    git remote add origin git@github.com:gudmundurh/$NAME.git
-    git branch -M main
-
-Set up deployment to SWA
-
-    SECRET=$(az staticwebapp secrets list -g $NAME -n $NAME -o tsv --query properties.apiKey)
-    gh secret set AZURE_STATIC_WEB_APPS_API_TOKEN --body "$SECRET"
-
-Push and wait:
-
-    git push -u origin main
-    sleep 2 && gh run watch
-
-Browse the site
-
-    open "https://$(az staticwebapp show  -g $NAME -n $NAME -o tsv --query defaultHostname)"
-
-# Frequently Used Features
-
-## Calling APIs
-
-via openapi client
-
-    pnpm i -D openapi-typescript-codegen
-    
-    In package.json:
-      "apiClient": "openapi -i http://localhost:5191/swagger/v1/swagger.json -o src/lib/apiClient",
-
-## Login
-
-via SWA
-
-## Database
-
-via Azure Storage
-
-# Teardown
-
-    az group delete -g $NAME
-    gh repo delete $NAME
-
-
 # Ideas
 
-1. Tag resources and the group with initial creation date
+1. Tag Azure resources and the resource group with initial creation date
