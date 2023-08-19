@@ -20,10 +20,12 @@ Create Svelte app
     pnpm create svelte@latest $NAME 
     cd $NAME
     pnpm i
+    git init . && git add . && git commit -m 'SvelteKit project'
 
 Copy in the template:
 
     curl -L https://github.com/gudmundurh/quick-infra/archive/refs/heads/main.tar.gz | tar  --strip-components=2 -xvz '*/template'
+    git add . && git commit -m 'Added quick-infra template'
 
 Create infrastructure
 
@@ -33,11 +35,7 @@ Create infrastructure
 Create Github repo
 
     gh repo create $NAME --private
-
-Create Git repo and push
-
-    git init . && git add . && git commit -m 'Initial commit'
-    git remote add origin git@github.com:gudmundurh/$NAME.git
+    git remote add origin git@github.com:$(gh api user -q ".login")/$NAME.git
     git branch -M main
 
 Set up deployment to SWA
