@@ -23,7 +23,7 @@ Create Svelte app
 
 Copy in the template:
 
-    curl -L https://github.com/gudmundurh/quick-infra/archive/refs/heads/main.tar.gz | tar  --strip-components=2 -xvz template
+    curl -L https://github.com/gudmundurh/quick-infra/archive/refs/heads/main.tar.gz | tar  --strip-components=2 -xvz '*/template'
 
 Create infrastructure
 
