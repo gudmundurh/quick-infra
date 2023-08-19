@@ -11,6 +11,7 @@ Principles:
 3. Super cheap – ideally free – to host
 4. From zero to full app in no time – including database and user logins
 5. Production-grade – as POCs have the (scary but real) tendency to end up in production (we need source control, CI/CD, infrastructure-as-code, etc.)
+6. Easy to throw away
 
 My tech stack for this:
 
@@ -18,13 +19,17 @@ My tech stack for this:
 2. Azure Static Web Apps – available for free and not at all static, running on Az Functions under the hood for server side code. Works out of the box with SvelteKit and Github, and has nice features like automatic environments and deployments of Github PRs.
 3. Github and Github Actions for CI/CD
 
-Will it last? Time will show. Github and Azure are not going anywhere
+Will it last? Time will tell 😎
 
-# Template files
+# The skeleton
+
+The template contains:
 
 1. This readme, containing all the necessary commands
 1. Bicep file with Azure infrastructure
 2. Github Actions pipeline for deploying to Azure SWA
+
+The infrastructure footprint is limited to a single Azure resource group and a repository in Github, sharing the same name. This makes it easy to delete the project down the line.
 
 # Setup
 
@@ -36,6 +41,8 @@ Before you start:
 The snippets below refer to the environment variable `NAME`, which you should set to your project name:
 
     NAME=poc-quicky-20230225
+
+(I like having a timestamp in the name, minimizing the headache in the future when trying to get rid of old projects.)
 
 Copy in the template:
 
