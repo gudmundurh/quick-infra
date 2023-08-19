@@ -44,15 +44,15 @@ The snippets below refer to the environment variable `NAME`, which you should se
 
 (I like having a timestamp in the name, minimizing the headache in the future when trying to get rid of old projects.)
 
-Copy in the template:
-
-    git clone --depth=1 https://github.com/gudmundurh/quick-infra.git $NAME && rm -rf $NAME/.git
-
 Create Svelte app
 
     pnpm create svelte@latest $NAME 
     cd $NAME
     pnpm i
+
+Copy in the template:
+
+    curl -L https://github.com/gudmundurh/quick-infra/archive/refs/heads/main.tar.gz | tar  --strip-components=1 -xvz
 
 Create infrastructure
 
@@ -102,11 +102,10 @@ via SWA
 
 via Azure Storage
 
-
 # Teardown
 
-    az group delete -g $RG
-    gh repo delete $REPO 
+    az group delete -g $NAME
+    gh repo delete $NAME
 
 
 # Ideas
