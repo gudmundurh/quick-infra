@@ -1,30 +1,30 @@
 # Infrastructure for quick POCs
 
-What this is:
-
-_Light-weight and production grade skeleton for building web apps super-quickly_
+_Light-weight and (somewhat) production grade skeleton for building web apps on Azure super-quickly._
 
 # Design
 
 Principles:
 
-1. No complex scripts and no custom libraries
-2. Self-contained – can survive for years despite org/tech/env changes
+1. Simple – No complex scripts and no custom libraries
+2. Self-contained – likely to survive for years despite org/tech/env changes
 3. Super cheap – ideally free – to host
 4. From zero to full app in no time – including database and user logins
-5. Production-grade – as POCs have the (scary but real) tendency to end up in production
+5. Production-grade – as POCs have the (scary but real) tendency to end up in production (we need source control, CI/CD, infrastructure-as-code, etc.)
 
-The tech stack:
+My tech stack for this:
 
-1. SvelteKit – could also be other JamStack solutions like Next.js. Allow building frontend easily but also fully fledged backends and APIs.
-2. Azure Static Web Apps – pretty much free and not at all static (Az Functions under the hood)
+1. SvelteKit – as Svelte is simply my favorite, very easy to use, true to the web and with very low footprint. SveleKit is a full application framework for Svelte, allowing one to build true web apps (not just frontend or backend).
+2. Azure Static Web Apps – available for free and not at all static, running on Az Functions under the hood for server side code. Works out of the box with SvelteKit and Github, and has nice features like automatic environments and deployments of Github PRs.
 3. Github and Github Actions for CI/CD
 
+Will it last? Time will show. Github and Azure are not going anywhere
 
 # Template files
 
-1. bicep file with infrastructure
-2. YAML pipeline for SWA
+1. This readme, containing all the necessary commands
+1. Bicep file with Azure infrastructure
+2. Github Actions pipeline for deploying to Azure SWA
 
 # Setup
 
@@ -33,20 +33,19 @@ Before you start:
 1. You need to be logged in via the Azure CLI and have selected a subscription you can write to (see `az account show`)
 2. You need to be logged in with the Github CLI (`gh`)
 
-The snippets below refer to these environment variables:
+The snippets below refer to the environment variable `NAME`, which you should set to your project name:
 
     NAME=poc-quicky-20230225
-    TEMPLATE=$(realpath ../template)
+
+Copy in the template:
+
+    git clone --depth=1 https://github.com/gudmundurh/quick-infra.git $NAME && rm -rf $NAME/.git
 
 Create Svelte app
 
     pnpm create svelte@latest $NAME 
     cd $NAME
     pnpm i
-
-Copy in template files
-
-    cp -r $TEMPLATE/. .
 
 Create infrastructure
 
@@ -62,23 +61,16 @@ Create Git repo and push
     git init . && git add . && git commit -m 'Initial commit'
     git remote add origin git@github.com:gudmundurh/$NAME.git
     git branch -M main
-    git push -u origin main
-
-Configure for SWA
-
-    pnpm i -D svelte-adapter-azure-swa
-
-    // in svelte.config.json
-    import azure from 'svelte-adapter-azure-swa';
-    ...
-    kit: {
-        adapter: azure()
-    }
 
 Set up deployment to SWA
 
     SECRET=$(az staticwebapp secrets list -g $NAME -n $NAME -o tsv --query properties.apiKey)
     gh secret set AZURE_STATIC_WEB_APPS_API_TOKEN --body "$SECRET"
+
+Push and wait:
+
+    git push -u origin main
+    sleep 2 && gh run watch
 
 Browse the site
 
